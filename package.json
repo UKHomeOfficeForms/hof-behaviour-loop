@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/UKHomeOfficeForms/hof-behaviour-loop",
   "dependencies": {
-    "hof-behaviour-summary-page": "^3.1.0",
+    "hof-behaviour-summary-page": "^3.2.1",
     "hof-theme-govuk": "^4.4.1",
     "lodash": "^4.17.15",
     "mixwith": "^0.1.1"
@@ -33,6 +33,7 @@
     "eslint": "^7.0.0",
     "eslint-config-homeoffice": "^2.2.0",
     "hof-form-controller": "^6.1.0",
+    "hof-model": "^3.1.2",
     "mocha": "^7.1.2",
     "nyc": "^15.0.1",
     "reqres": "^3.0.1",
