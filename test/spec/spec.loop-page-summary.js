@@ -8,11 +8,13 @@ const loopPageSummary = new Loop({loopData: {}}).loopPageSummary;
 describe('Loop page summary', () => {
 
   it('should return the expected loop summary', () => {
-    const loopData = {
-      sectionKey: 'some-section'
+    const options = {
+      loopData: {
+        sectionKey: 'some-section'
+      }
     };
     const req = request({});
-    req.form.options.loopData = loopData;
+    req.form.options.loopData = options.loopData;
 
     loopPageSummary.helpers = {
       resolveTitle: sinon.stub(),
@@ -31,10 +33,10 @@ describe('Loop page summary', () => {
     req.translate.withArgs('pages.some-section.header').returns('summary title');
     req.translate.withArgs('pages.some-section.delete-text').returns('delete text');
 
-    const returned = loopPageSummary.summaryFor(req, 'root-something', items);
+    const returned = loopPageSummary.summaryFor(req, 'root-something', items, options);
 
     loopPageSummary.helpers.toDisplayableSummary.should.have.been.calledOnce
-      .and.calledWithExactly(req, items, loopData);
+      .and.calledWithExactly(req, items, options);
     loopPageSummary.helpers.resolveTitle.should.have.been.calledOnce
       .and.calledWithExactly(req, false, 'root-something');
     loopPageSummary.helpers.conditionalTranslate.should.have.been.calledOnce
@@ -46,7 +48,7 @@ describe('Loop page summary', () => {
     expect(returned).to.deep.equal({
       title: 'some title',
       intro: 'some intro',
-      itemSummaries: itemSummaries,
+      items: itemSummaries,
       summaryTitle: 'summary title',
       hasItems: 1,
       deleteText: 'delete text'

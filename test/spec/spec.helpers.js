@@ -105,7 +105,6 @@ describe('Loop page summary helpers', () => {
 
       expect(returned).to.equal('monkeys');
     });
-
   });
 
   describe('toDisplayableSummary', () => {
@@ -143,10 +142,11 @@ describe('Loop page summary helpers', () => {
            'step-2': {
              fields: ['field3']
            }
-         }
+         },
+         loopData: loopData
        };
 
-      req.form.options = options;
+      req.form.options.steps = options.steps;
     });
 
     describe('with no configuration overrides set', () => {
@@ -164,7 +164,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -214,7 +214,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -269,7 +269,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -369,7 +369,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -429,7 +429,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
@@ -477,7 +477,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
@@ -539,7 +539,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs('pages.some-section.summary-item').returns('item title');
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
 
@@ -576,7 +576,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -624,7 +624,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs('pages.some-section.summary-item').returns('item title');
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
 
@@ -653,7 +653,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
