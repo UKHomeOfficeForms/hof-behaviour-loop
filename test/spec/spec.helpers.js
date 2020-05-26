@@ -117,20 +117,12 @@ describe('Loop page summary helpers', () => {
 
     beforeEach(() => {
        options = {
-         steps: {
-           '/confirm': {
-             loopSections: {
-               'step-1': [
-                 'field1',
-                 'field2'
-               ],
-               'step-2': [
-                 'field3'
-               ]
-             }
-           }
-         },
          fields: {
+           field1: {},
+           field2: {},
+           field3: {}
+         },
+         fieldsConfig: {
            field1: {},
            field2: {},
            field3: {}
@@ -344,24 +336,16 @@ describe('Loop page summary helpers', () => {
             field3: 'meerkat'
           }
         ];
-
-        options.steps['/confirm'].loopSections = {
-          'step-1': [
-            {
-              field: 'field1',
+        options.fieldsConfig = {
+          field1: {
               parse: d => d + ' a'
-            },
-            {
-              field: 'field2',
+          },
+          field2: {
               parse: d => d + ' x'
-            }
-          ],
-          'step-2': [
-            {
-              field: 'field3',
+          },
+          field3: {
               parse: d => d + ' y'
-            }
-          ]
+          }
         };
 
         req.translate.withArgs('pages.some-section.summary-item').returns('item title');
@@ -400,6 +384,59 @@ describe('Loop page summary helpers', () => {
               header: 'field 3 display',
               subroute: 'step-2',
               value: 'meerkat y'
+            }
+          ]
+        }]);
+      });
+
+      it('should respect `omitFromSummary` flag', () => {
+        const items = [
+          {
+            field1: 'badger',
+            field2: 'monkeys',
+            field3: 'meerkat'
+          }
+        ];
+        options.fieldsConfig = {
+          field1: {
+              omitFromSummary: true
+          },
+          field2: {
+          },
+          field3: {
+          }
+        };
+
+        req.translate.withArgs('pages.some-section.summary-item').returns('item title');
+        req.translate.withArgs(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']).returns('field 1 display');
+        req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
+        req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
+
+        const returned = helpers.toDisplayableSummary(req, items, options);
+
+        req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
+        req.translate.should.not.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
+        req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
+        req.translate.should.have.been.calledWithExactly(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']);
+
+        expect(returned).to.deep.equal([{
+          id: 0,
+          deleteRoute: 'step-1',
+          itemTitle: 'item title',
+          editFieldsIndividually: true,
+          changeRoute: 'step-1',
+          fields: [
+            {
+              field: 'field2',
+              header: 'field 2 display',
+              subroute: 'step-1',
+              value: 'monkeys'
+            },
+            {
+              field: 'field3',
+              header: 'field 3 display',
+              subroute: 'step-2',
+              value: 'meerkat'
             }
           ]
         }]);
