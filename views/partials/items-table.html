@@ -5,12 +5,12 @@
               <!-- <caption class="govuk-table__caption">Dates and amounts</caption> -->
               <thead class="govuk-table__head">
                   <tr class="govuk-table__row">
-                      <th scope="col" class="govuk-table__header data-col"{{#editFieldsIndividually}} colspan="2"{{/editFieldsIndividually}}>{{itemTitle}}</th>
-                      {{^editFieldsIndividually}}
+                      <th scope="col" class="govuk-table__header data-col"{{^editHeader}} colspan="2"{{/editHeader}}>{{itemTitle}}</th>
+                      {{editHeader}}
                         <th scope="col" class="govuk-table__header action-col">
                             <a href="{{baseUrl}}/{{route}}/{{changeRoute}}/{{id}}/change">{{#t}}buttons.edit{{/t}}<span class="visuallyhidden"> {{itemTitle}}</span></a>
                         </th>
-                      {{/editFieldsIndividually}}
+                      {{/editHeader}}
                       <th scope="col" class="govuk-table__header action-col">
                           <a href="{{baseUrl}}/{{route}}/{{deleteRoute}}/{{id}}/delete">{{deleteText}}<span class="visuallyhidden"> {{itemTitle}}</span></a>
                       </th>

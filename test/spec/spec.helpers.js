@@ -167,6 +167,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -217,6 +218,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -273,6 +275,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'item title 1',
             editFieldsIndividually: true,
+            editHeader: false,
             changeRoute: 'step-1',
             fields: [
               {
@@ -300,6 +303,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'item title 2',
             editFieldsIndividually: true,
+            editHeader: false,
             changeRoute: 'step-1',
             fields: [
               {
@@ -364,6 +368,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -423,6 +428,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -478,6 +484,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'monkeys',
           editFieldsIndividually: true,
+          editHeader: true,
           changeRoute: 'step-1',
           fields: [
             {
@@ -527,6 +534,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'monkeys',
             editFieldsIndividually: true,
+            editHeader: true,
             changeRoute: 'step-1',
             fields: [
               {
@@ -548,6 +556,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'rabbit',
             editFieldsIndividually: true,
+            editHeader: true,
             changeRoute: 'step-1',
             fields: [
               {
@@ -586,6 +595,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'monkeys',
           editFieldsIndividually: false,
+          editHeader: true,
           changeRoute: 'step-1',
           fields: []
         }]);
@@ -629,6 +639,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -674,6 +685,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'monkeys',
           editFieldsIndividually: false,
+          editHeader: true,
           changeRoute: 'step-1',
           fields: []
         }]);
@@ -706,6 +718,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: false,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
