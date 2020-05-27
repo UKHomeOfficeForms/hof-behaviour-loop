@@ -73,7 +73,7 @@ module.exports = {
        '/dependent-details': { 
          behaviours: Loop,
          loop: {
-           storeKey: 'dependentDetails'
+           storeKey: 'dependentDetails',
            subSteps: {
              dependant: { //data entry step
                fields: ['dependentFullName', 'dependentDateOfBirth', 'dependentRelationship'],
@@ -124,9 +124,9 @@ module.exports = {
 * **loopCondition** - Defines under what circumstances the user is sent back to the first step on submission from the 
 item listing page.   
 * **itemTable** - Controls presentation of items within the item listing page (or any loop page including 
-partials/items-table). See [Configuring the item listing table][#configuring-the-item-listing-table]
+partials/items-table). See 'Configuring the item listing table'
 * **summary** - Controls presentation of items within the summary ('Check your answers') page (or any page implementing
-the summary behaviour and including partials/summary-table). See ![Configuring the summary][#configuring-the-summary]
+the summary behaviour and including partials/summary-table). See 'Configuring the summary'
 
 
 ##### Configuring the item listing table
@@ -137,7 +137,7 @@ users an overview of the data that they've entered so far along with the ability
 By default the item listing table displays data in a format similar to the 'check your answers' / summary page from the 
 GovUk design system.
 
-![Default item listing](examples/Multi-field default.png)
+![Default item listing](/examples/Multi-field%20default.png?raw=true)
 
 The following options are available for altering the display of information in this table as part of the 'itemTable' 
 element.
@@ -161,19 +161,19 @@ module.exports = {
 ```
 
   * **headerField** (optional) - If present the specified field will be used as the heading for each item in the table.
-  ![Dependants summary with field as header](examples/Multi field-header as field.png)
+  ![Dependants summary with field as header](/examples/Multi%20field-header%20as%20field.png?raw=true)
   
   * **editFieldsIndividually** (optional, defaults to true unless headerField is specified and there is only one 
   field per item) - controls whether the change link appears for an item or for each field within that item. 
-  ![Dependants summary editing individual fields](examples/multi-field edit record level.png)
+  ![Dependants summary editing individual fields](/examples/multi-field%20edit%20record%20level.png?raw=true)
   
 Combining the two gives us something suitable for editing entries where all fields are entered in one page:
 
-![Item listing with field as header and record level editing](examples/multi-field first field as title edit record level.png)
+![Item listing with field as header and record level editing](/examples/multi-field%20first%20field%20as%20title%20edit%20record%20level.png?raw=true)
 
 Or for a single field:
 
-![Item listing with single field as header](examples/single field.png)
+![Item listing with single field as header](/examples/single%20field.png?raw=true)
 
 
 ##### Configuring the summary
@@ -183,7 +183,7 @@ behaviour of the hof-behaviour-summary-page and enhances it to support display o
 
 By default the summary display will include a space between each item created in a loop.
 
-![Summary listing with space between entries](examples/Summary with spacer.png)
+![Summary listing with space between entries](/examples/Summary%20with%20spacer.png?raw=true)
 
 The following options are available for altering the display of information in this table as part of the 'summary' 
 element.
@@ -207,7 +207,7 @@ module.exports = {
 ```
 
 * **applySpacer** (optional, defaults to true) - If set to false the spacer will not be applied
-  ![Summary listing with no space between entries](examples/Summary no spacer.png)
+  ![Summary listing with no space between entries](/examples/Summary no spacer.png?raw=true)
   
 ### Fields configuration
 
