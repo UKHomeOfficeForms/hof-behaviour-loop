@@ -6,7 +6,7 @@
               <thead class="govuk-table__head">
                   <tr class="govuk-table__row">
                       <th scope="col" class="govuk-table__header data-col"{{^editHeader}} colspan="2"{{/editHeader}}>{{itemTitle}}</th>
-                      {{editHeader}}
+                      {{#editHeader}}
                         <th scope="col" class="govuk-table__header action-col">
                             <a href="{{baseUrl}}/{{route}}/{{changeRoute}}/{{id}}/change">{{#t}}buttons.edit{{/t}}<span class="visuallyhidden"> {{itemTitle}}</span></a>
                         </th>

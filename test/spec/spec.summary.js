@@ -31,7 +31,6 @@ describe('Summary Page Behaviour', () => {
         '/a-loop-step': {
           loop: {
             storeKey: 'my-store-key',
-            sectionKey: 'my-section-key',
             subSteps: {
               'sub-step-1': {
                 fields: ['another-loop-field']
@@ -67,6 +66,76 @@ describe('Summary Page Behaviour', () => {
           'field-one': 1,
           'field-two': 2,
           'my-store-key': [
+            {
+              'some-loop-field': 'a value'
+            },
+            {
+              'some-loop-field': 'another value'
+            }
+          ]
+        });
+
+        // fieldsConfig is provided by the surrounding framework in a real app
+        req.form.options.fieldsConfig = {
+           'field-one': {
+             validate: 'required'
+           },
+           'field-two': {
+             validate: 'required'
+           },
+           'some-loop-field': {
+             validate: 'required'
+           }
+        };
+
+        const result = controller.locals(req, res);
+        expect(result.rows.length).to.equal(3);
+        expect(result.rows[0].fields.length).to.equal(1);
+        expect(result.rows[0].fields[0].field).to.equal('field-one');
+        expect(result.rows[1].fields.length).to.equal(3);
+        expect(result.rows[1].fields[0].field).to.equal('some-loop-field');
+        expect(result.rows[1].fields[0].label).to.equal('pages.confirm.fields.some-loop-field.label');
+        expect(result.rows[1].fields[0].changeLinkDescription).to.equal('pages.confirm.fields.some-loop-field.changeLinkDescription');
+        expect(result.rows[1].fields[0].value).to.equal('a value');
+        expect(result.rows[1].fields[0].spacer).to.be.an('undefined');
+        expect(result.rows[1].fields[0].step).to.equal('/a-loop-step/sub-step-2/0');
+
+        expect(result.rows[1].fields[1]).deep.equal({ spacer: true });
+
+        expect(result.rows[1].fields[2].field).to.equal('some-loop-field');
+        expect(result.rows[1].fields[2].label).to.equal('pages.confirm.fields.some-loop-field.label');
+        expect(result.rows[1].fields[2].changeLinkDescription).to.equal('pages.confirm.fields.some-loop-field.changeLinkDescription');
+        expect(result.rows[1].fields[2].value).to.equal('another value');
+        expect(result.rows[1].fields[2].step).to.equal('/a-loop-step/sub-step-2/1');
+        expect(result.rows[1].fields[2].spacer).to.be.an('undefined');
+
+        expect(result.rows[2].fields.length).to.equal(1);
+        expect(result.rows[2].fields[0].field).to.equal('field-two');
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.one.header', 'pages.one.header']);
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.a-loop-step.header', 'pages.a-loop-step.header']);
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.two.header', 'pages.two.header']);
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.fields.some-loop-field.label',
+                                                               'fields.some-loop-field.summary',
+                                                               'fields.some-loop-field.label',
+                                                               'fields.some-loop-field.legend'
+                                                             ]);
+        expect(req.translate).to.have.been.calledWithExactly([
+                                                               'pages.confirm.fields.some-loop-field.changeLinkDescription',
+                                                               'fields.some-loop-field.changeLinkDescription',
+                                                               'pages.confirm.fields.some-loop-field.label',
+                                                               'fields.some-loop-field.summary',
+                                                               'fields.some-loop-field.label',
+                                                               'fields.some-loop-field.legend'
+                                                             ]);
+      });
+
+      it('should default storeKey', () => {
+        delete req.form.options.steps['/a-loop-step'].loop.storeKey;
+
+        req.sessionModel.set({
+          'field-one': 1,
+          'field-two': 2,
+          'a-loop-step-items': [
             {
               'some-loop-field': 'a value'
             },

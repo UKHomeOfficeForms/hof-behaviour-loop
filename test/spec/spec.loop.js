@@ -236,7 +236,7 @@ describe('Loop behaviour', () => {
         route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.options.loop.storeKey).to.equal('items');
+      expect(loop.options.loop.storeKey).to.equal('badgers-items');
       // we want the original value to be modified so that the summary module gets the right key
       expect(options.loop.storeKey).to.equal(loop.options.loop.storeKey);
     });
@@ -265,6 +265,22 @@ describe('Loop behaviour', () => {
           subSteps: {}
         },
         route: '/badgers'
+      };
+      const loop = new Loop(options);
+      expect(loop.options.loop.sectionKey).to.equal('badgers');
+      // we want the original value to be modified so that the summary module gets the right key
+      expect(options.loop.sectionKey).to.equal(loop.options.loop.sectionKey);
+    });
+
+    it('should handle trailing / when setting the sectionKey attribute based on the route', () => {
+      const options = {
+        // fieldsConfig is provided by the surrounding framework in a real app
+        fieldsConfig: {
+        },
+        loop: {
+          subSteps: {}
+        },
+        route: '/badgers/'
       };
       const loop = new Loop(options);
       expect(loop.options.loop.sectionKey).to.equal('badgers');
@@ -534,7 +550,7 @@ describe('Loop behaviour', () => {
            });
 
            it('should show the first step when there are no items', () => {
-              req.sessionModel.get.withArgs('items').returns(undefined);
+              req.sessionModel.get.withArgs('badgers-items').returns(undefined);
 
               loop.get(req, res, callback);
 
@@ -543,7 +559,7 @@ describe('Loop behaviour', () => {
               callback.should.not.have.been.called;
            });
            it('should show the first step when there is empty items', () => {
-              req.sessionModel.get.withArgs('items').returns([]);
+              req.sessionModel.get.withArgs('badgers-items').returns([]);
 
               loop.get(req, res, callback);
 
@@ -555,7 +571,7 @@ describe('Loop behaviour', () => {
            it('should redirect to the first step correctly when baseUrl and route have trailing slashes', () => {
              options.route = '/badgers/';
              req.baseUrl = '/app/';
-             req.sessionModel.get.withArgs('items').returns(undefined);
+             req.sessionModel.get.withArgs('badgers-items').returns(undefined);
 
              loop.get(req, res, callback);
 
@@ -565,7 +581,7 @@ describe('Loop behaviour', () => {
            });
 
            it('should show the final step when there are already items', () => {
-             req.sessionModel.get.withArgs('items').returns([{}]);
+             req.sessionModel.get.withArgs('badgers-items').returns([{}]);
 
              loop.get(req, res, callback);
 
@@ -707,13 +723,13 @@ describe('Loop behaviour', () => {
            steps.forEach(function(step) {
              it('should delete items from ' + step.description + ' step link and redirect to last step if there are more items', function() {
                const originalItems = [{}, {}];
-               req.sessionModel.get.withArgs('items').returns(originalItems.slice());
+               req.sessionModel.get.withArgs('badgers-items').returns(originalItems.slice());
                req.params.action = step.name;
 
                loop.get(req, res, callback);
 
                req.sessionModel.set.should.have.been.calledOnce
-                 .and.calledWithExactly('items', [originalItems[1]]);
+                 .and.calledWithExactly('badgers-items', [originalItems[1]]);
 
                superGet.should.not.have.been.called;
                callback.should.not.have.been.called;
@@ -724,13 +740,13 @@ describe('Loop behaviour', () => {
              it('should delete non-zero-indexed items from ' + step.description + ' step link and redirect to last step', function() {
                req.params.id = '1';
                const originalItems = [{}, {}];
-               req.sessionModel.get.withArgs('items').returns(originalItems.slice());
+               req.sessionModel.get.withArgs('badgers-items').returns(originalItems.slice());
                req.params.action = step.name;
 
                loop.get(req, res, callback);
 
                req.sessionModel.set.should.have.been.calledOnce
-                 .and.calledWithExactly('items', [originalItems[0]]);
+                 .and.calledWithExactly('badgers-items', [originalItems[0]]);
 
                superGet.should.not.have.been.called;
                callback.should.not.have.been.called;
@@ -740,13 +756,13 @@ describe('Loop behaviour', () => {
 
              it('should delete items from ' + step.description + ' step link and redirect to first step if there are no more items', function() {
                const originalItems = [{}];
-               req.sessionModel.get.withArgs('items').returns(originalItems.slice());
+               req.sessionModel.get.withArgs('badgers-items').returns(originalItems.slice());
                req.params.action = step.name;
 
                loop.get(req, res, callback);
 
                req.sessionModel.set.should.have.been.calledOnce
-                 .and.calledWithExactly('items', []);
+                 .and.calledWithExactly('badgers-items', []);
 
                superGet.should.not.have.been.called;
                callback.should.not.have.been.called;
@@ -1046,7 +1062,7 @@ describe('Loop behaviour', () => {
               field1: 'something',
               field2: 'somethingElse'
             };
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               },
@@ -1065,7 +1081,7 @@ describe('Loop behaviour', () => {
             expect(returned).to.equal('a badger');
             callback.should.have.been.calledOnce;
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1086,7 +1102,7 @@ describe('Loop behaviour', () => {
               field2: null,
               field3: 'badger3'
             };
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               },
@@ -1106,7 +1122,7 @@ describe('Loop behaviour', () => {
             expect(returned).to.equal('a badger');
             callback.should.have.been.calledOnce;
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1124,7 +1140,7 @@ describe('Loop behaviour', () => {
             req.form.values = {
               field3: 'badger3'
             };
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               },
@@ -1144,7 +1160,7 @@ describe('Loop behaviour', () => {
             expect(returned).to.equal('a badger');
             callback.should.have.been.calledOnce;
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1163,7 +1179,7 @@ describe('Loop behaviour', () => {
         describe('when reaching the end of data entry for a new item', () => {
           it('should save the values into a new loop item', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1177,7 +1193,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1195,7 +1211,7 @@ describe('Loop behaviour', () => {
 
           it('should ignore fields with no value', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1209,7 +1225,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1225,7 +1241,7 @@ describe('Loop behaviour', () => {
 
           it('should create an array of items if none exists', () => {
 
-            req.sessionModel.get.withArgs('items').returns(undefined);
+            req.sessionModel.get.withArgs('badgers-items').returns(undefined);
             req.sessionModel.get.withArgs('field1').returns('something');
             req.sessionModel.get.withArgs('field2').returns('somethingElse');
             req.sessionModel.get.withArgs('field3').returns('something3');
@@ -1235,7 +1251,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'something',
                   field2: 'somethingElse',
@@ -1267,7 +1283,7 @@ describe('Loop behaviour', () => {
         describe('when reaching the end of data entry for a new item from a fork', () => {
           it('should save the values into a new loop item', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1282,7 +1298,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1301,7 +1317,7 @@ describe('Loop behaviour', () => {
 
           it('should ignore fields with no value', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1316,7 +1332,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1332,7 +1348,7 @@ describe('Loop behaviour', () => {
 
           it('should create an array of items if none exists', () => {
 
-            req.sessionModel.get.withArgs('items').returns(undefined);
+            req.sessionModel.get.withArgs('badgers-items').returns(undefined);
             req.sessionModel.get.withArgs('field1').returns('something');
             req.sessionModel.get.withArgs('field2').returns('somethingElse');
             req.sessionModel.get.withArgs('field3').returns('something3');
@@ -1342,7 +1358,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'something',
                   field2: 'somethingElse',
@@ -1382,7 +1398,7 @@ describe('Loop behaviour', () => {
           });
           it('should save the values into a new loop item', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1395,7 +1411,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1413,7 +1429,7 @@ describe('Loop behaviour', () => {
 
           it('should create a new items array if none exists', () => {
 
-            req.sessionModel.get.withArgs('items').returns(undefined);
+            req.sessionModel.get.withArgs('badgers-items').returns(undefined);
             req.sessionModel.get.withArgs('field1').returns('something');
             req.sessionModel.get.withArgs('field2').returns('somethingElse');
             req.sessionModel.get.withArgs('field3').returns('something3');
@@ -1422,7 +1438,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'something',
                   field2: 'somethingElse',
@@ -1496,12 +1512,11 @@ describe('Loop behaviour', () => {
             something: 'someValue',
             route: 'badgers'
           };
-          options.loop.sectionKey = 'my-section-key';
 
           superLocals.returns(existingLocals);
 
           const items = [{}];
-          req.sessionModel.get.withArgs('items').returns(items);
+          req.sessionModel.get.withArgs('badgers-items').returns(items);
           req.params.action = 'something';
 
           loop.loopPageSummary.summaryFor = sinon.stub();
@@ -1599,7 +1614,7 @@ describe('Loop behaviour', () => {
             };
             superGetValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error, values);
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'mongoose',
                 field2: 'sheep',
@@ -1640,7 +1655,7 @@ describe('Loop behaviour', () => {
             };
             superGetValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error, values);
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'mongoose',
                 field2: 'sheep',
