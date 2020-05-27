@@ -254,6 +254,91 @@ describe('Summary Page Behaviour', () => {
         expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.a-loop-step.header', 'pages.a-loop-step.header']);
       });
 
+      it('should handle loop section being excluded from supplied section config', () => {
+        req.sessionModel.set({
+          'field-one': 1,
+          'field-two': 2,
+          'my-store-key': [
+            {
+              'some-loop-field': 'a value'
+            },
+            {
+              'some-loop-field': 'another value'
+            }
+          ]
+        });
+
+        // fieldsConfig is provided by the surrounding framework in a real app
+        req.form.options.fieldsConfig = {
+           'field-one': {
+             validate: 'required'
+           },
+           'field-two': {
+             validate: 'required'
+           },
+           'some-loop-field': {
+             validate: 'required'
+           }
+        };
+        req.form.options.sections = {
+          'section-one': ['field-one', 'field-two']
+        };
+
+        const result = controller.locals(req, res);
+        expect(result.rows.length).to.equal(1);
+        expect(result.rows[0].fields.length).to.equal(2);
+        expect(result.rows[0].fields[0].field).to.equal('field-one');
+        expect(result.rows[0].fields[1].field).to.equal('field-two');
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.section-one.header', 'pages.section-one.header']);
+      });
+
+      it('should use the supplied section config to restrict loop fields if provided', () => {
+        req.sessionModel.set({
+          'field-one': 1,
+          'field-two': 2,
+          'my-store-key': [
+            {
+              'some-loop-field': 'a value',
+              'another-loop-field': 'a second value'
+            },
+            {
+              'some-loop-field': 'another value'
+            }
+          ]
+        });
+
+        // fieldsConfig is provided by the surrounding framework in a real app
+        req.form.options.fieldsConfig = {
+           'field-one': {
+             validate: 'required'
+           },
+           'field-two': {
+             validate: 'required'
+           },
+           'some-loop-field': {
+             validate: 'required'
+           }
+        };
+        req.form.options.sections = {
+          'section-one': ['field-one', 'field-two'],
+          'a-loop-step': [{field: 'another-loop-field', parse: v => v ? v + ' x' : v, step: 'something'}]
+        };
+
+        const result = controller.locals(req, res);
+        expect(result.rows.length).to.equal(2);
+        expect(result.rows[0].fields.length).to.equal(2);
+        expect(result.rows[0].fields[0].field).to.equal('field-one');
+        expect(result.rows[0].fields[1].field).to.equal('field-two');
+
+        expect(result.rows[1].fields.length).to.equal(1);
+        expect(result.rows[1].fields[0].field).to.equal('another-loop-field');
+        expect(result.rows[1].fields[0].value).to.equal('a second value x');
+        expect(result.rows[1].fields[0].step).to.equal('/a-loop-step/sub-step-1/0');
+
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.section-one.header', 'pages.section-one.header']);
+        expect(req.translate).to.have.been.calledWithExactly(['pages.confirm.sections.a-loop-step.header', 'pages.a-loop-step.header']);
+      });
+
       it('should use the value as supplied if no parse function present in section or field configs', () => {
         req.sessionModel.set({
           'field-one': 1,
