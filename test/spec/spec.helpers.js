@@ -68,45 +68,6 @@ describe('Loop page summary helpers', () => {
 
   });
 
-  describe('resolveTitle', () => {
-    const pagePath = 'some-page';
-
-    it('should return title from first-item-header if one exists and this is the first item', () => {
-      req.translate.withArgs('pages.some-page.first-item-header').returns('badgers');
-      req.translate.withArgs('pages.some-page.header').returns('monkeys');
-
-      const returned = helpers.resolveTitle(req, true, pagePath);
-
-      req.translate.should.have.been.calledWithExactly('pages.some-page.first-item-header');
-      req.translate.should.have.been.calledWithExactly('pages.some-page.header');
-
-      expect(returned).to.equal('badgers');
-    });
-
-    it('should return title from header if no first-item-header exists and this is the first item', () => {
-      req.translate.withArgs('pages.some-page.first-item-header').returns('pages.some-page.first-item-header');
-      req.translate.withArgs('pages.some-page.header').returns('monkeys');
-
-      const returned = helpers.resolveTitle(req, true, pagePath);
-
-      req.translate.should.have.been.calledWithExactly('pages.some-page.first-item-header');
-      req.translate.should.have.been.calledWithExactly('pages.some-page.header');
-
-      expect(returned).to.equal('monkeys');
-    });
-
-    it('should not check first-item-header if this is not the first item', () => {
-      req.translate.withArgs('pages.some-page.header').returns('monkeys');
-
-      const returned = helpers.resolveTitle(req, false, pagePath);
-
-      req.translate.should.have.been.calledOnce
-        .and.calledWithExactly('pages.some-page.header');
-
-      expect(returned).to.equal('monkeys');
-    });
-  });
-
   describe('toDisplayableSummary', () => {
     const loop = {
       sectionKey: 'some-section',
