@@ -208,7 +208,7 @@ module.exports = {
 ```
 
 * **applySpacer** (optional, defaults to true) - If set to false the spacer will not be applied
-  ![Summary listing with no space between entries](/examples/Summary no spacer.png?raw=true)
+  ![Summary listing with no space between entries](/examples/Summary%20no%20spacer.png?raw=true)
   
 ### Fields configuration
 
