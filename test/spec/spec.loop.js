@@ -30,21 +30,22 @@ describe('Loop behaviour', () => {
              omitFromSummary: true
            }
         },
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3', 'field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3', 'field4']
+            }
           }
-        }
+        },
+        route: '/badgers'
       };
       const loop = new Loop(options);
       expect(loop.options.fields).to.deep.equal(
@@ -85,21 +86,22 @@ describe('Loop behaviour', () => {
            }
         },
         fields: {},
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3', 'field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3', 'field4']
+            }
           }
-        }
+        },
+        route: '/badgers'
       };
       const loop = new Loop(options);
       expect(loop.options.fields).to.deep.equal(
@@ -140,15 +142,16 @@ describe('Loop behaviour', () => {
            }
         },
         fields: {},
-        loopData: {
-        }
+        loop: {
+        },
+        route: '/badgers'
       };
       const loop = new Loop(options);
       expect(loop.options.fields).to.deep.equal({});
       expect(options.fields).to.deep.equal({});
     });
 
-    it('should not overwrite the fields value they are already specified', () => {
+    it('should not overwrite the fields value if they are already specified', () => {
       const options = {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
@@ -185,21 +188,22 @@ describe('Loop behaviour', () => {
              omitFromSummary: true
            }
         },
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3', 'field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3', 'field4']
+            }
           }
-        }
+        },
+        route: '/badgers'
       };
       const loop = new Loop(options);
       expect(loop.options.fields).to.deep.equal(
@@ -226,45 +230,77 @@ describe('Loop behaviour', () => {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
+        loop: {
+          subSteps: {}
         },
-        subSteps: {
-        }
+        route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.options.loopData.storeKey).to.equal('items');
+      expect(loop.options.loop.storeKey).to.equal('badgers-items');
       // we want the original value to be modified so that the summary module gets the right key
-      expect(options.loopData.storeKey).to.equal(loop.options.loopData.storeKey);
+      expect(options.loop.storeKey).to.equal(loop.options.loop.storeKey);
     });
 
-    it('should not overwrite the storeKey attribute to if provided', () => {
+    it('should not overwrite the storeKey attribute if provided', () => {
       const options = {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
-          storeKey: 'badgers'
+        loop: {
+          storeKey: 'monkeys',
+          subSteps: {}
         },
-        subSteps: {
-        }
+        route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.options.loopData.storeKey).to.equal('badgers');
+      expect(loop.options.loop.storeKey).to.equal('monkeys');
     });
 
-    it('should take confirmStep from loopData', () => {
+    it('should default the sectionKey attribute based on the route if not provided', () => {
       const options = {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
-          confirmStep: '/badgers'
+        loop: {
+          subSteps: {}
         },
-        subSteps: {
-        }
+        route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.confirmStep).to.equal('/badgers');
+      expect(loop.options.loop.sectionKey).to.equal('badgers');
+      // we want the original value to be modified so that the summary module gets the right key
+      expect(options.loop.sectionKey).to.equal(loop.options.loop.sectionKey);
+    });
+
+    it('should handle trailing / when setting the sectionKey attribute based on the route', () => {
+      const options = {
+        // fieldsConfig is provided by the surrounding framework in a real app
+        fieldsConfig: {
+        },
+        loop: {
+          subSteps: {}
+        },
+        route: '/badgers/'
+      };
+      const loop = new Loop(options);
+      expect(loop.options.loop.sectionKey).to.equal('badgers');
+      // we want the original value to be modified so that the summary module gets the right key
+      expect(options.loop.sectionKey).to.equal(loop.options.loop.sectionKey);
+    });
+
+    it('should ignore the sectionKey attribute if provided', () => {
+      const options = {
+        // fieldsConfig is provided by the surrounding framework in a real app
+        fieldsConfig: {
+        },
+        loop: {
+          sectionKey: 'monkeys',
+          subSteps: {}
+        },
+        route: '/badgers'
+      };
+      const loop = new Loop(options);
+      expect(loop.options.loop.sectionKey).to.equal('badgers');
     });
 
   });
@@ -293,21 +329,22 @@ describe('Loop behaviour', () => {
             omitFromSummary: true
           }
         },
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2', 'field3'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2', 'field3'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field4']
+            }
           }
-        }
+        },
+        route: '/badgers'
       };
 
       let req = request({});
@@ -365,20 +402,32 @@ describe('Loop behaviour', () => {
             omitFromSummary: true
           }
         },
-        loopData: {
-          confirmStep: '/confirm'
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another',
+              forks: [
+                {
+                  target: 'forkedStep',
+                    condition: {
+                      field: 'field2',
+                      value: 'fork it!'
+                  }
+                }
+              ]
+            },
+            forkedStep: {
+              fields: ['field4'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3']
+            }
           }
         },
         route: '/badgers'
@@ -396,6 +445,10 @@ describe('Loop behaviour', () => {
 
         beforeEach(()=> {
           superGet.reset();
+        });
+
+        after(()=> {
+          superGet.restore();
         });
 
         describe('accessing the top-level step', () => {
@@ -491,13 +544,13 @@ describe('Loop behaviour', () => {
 
         describe('accessing a sub-step before its prerequisites are satisfied', () => {
            beforeEach(() => {
-             options.subSteps.step2.prereqs = 'someField';
+             options.loop.subSteps.step2.prereqs = 'someField';
              req.params.action = 'step2';
              req.sessionModel.get.withArgs('someField').returns(undefined);
            });
 
            it('should show the first step when there are no items', () => {
-              req.sessionModel.get.withArgs('items').returns(undefined);
+              req.sessionModel.get.withArgs('badgers-items').returns(undefined);
 
               loop.get(req, res, callback);
 
@@ -506,7 +559,7 @@ describe('Loop behaviour', () => {
               callback.should.not.have.been.called;
            });
            it('should show the first step when there is empty items', () => {
-              req.sessionModel.get.withArgs('items').returns([]);
+              req.sessionModel.get.withArgs('badgers-items').returns([]);
 
               loop.get(req, res, callback);
 
@@ -518,7 +571,7 @@ describe('Loop behaviour', () => {
            it('should redirect to the first step correctly when baseUrl and route have trailing slashes', () => {
              options.route = '/badgers/';
              req.baseUrl = '/app/';
-             req.sessionModel.get.withArgs('items').returns(undefined);
+             req.sessionModel.get.withArgs('badgers-items').returns(undefined);
 
              loop.get(req, res, callback);
 
@@ -528,7 +581,7 @@ describe('Loop behaviour', () => {
            });
 
            it('should show the final step when there are already items', () => {
-             req.sessionModel.get.withArgs('items').returns([{}]);
+             req.sessionModel.get.withArgs('badgers-items').returns([{}]);
 
              loop.get(req, res, callback);
 
@@ -567,7 +620,7 @@ describe('Loop behaviour', () => {
 
         describe('accessing a sub-step when its prerequisites are satisfied', () => {
            beforeEach(() => {
-             options.subSteps.step2.prereqs = 'someField';
+             options.loop.subSteps.step2.prereqs = 'someField';
              req.params.action = 'step2';
              req.sessionModel.get.withArgs('someField').returns('something');
            });
@@ -670,13 +723,13 @@ describe('Loop behaviour', () => {
            steps.forEach(function(step) {
              it('should delete items from ' + step.description + ' step link and redirect to last step if there are more items', function() {
                const originalItems = [{}, {}];
-               req.sessionModel.get.withArgs('items').returns(originalItems.slice());
+               req.sessionModel.get.withArgs('badgers-items').returns(originalItems.slice());
                req.params.action = step.name;
 
                loop.get(req, res, callback);
 
                req.sessionModel.set.should.have.been.calledOnce
-                 .and.calledWithExactly('items', [originalItems[1]]);
+                 .and.calledWithExactly('badgers-items', [originalItems[1]]);
 
                superGet.should.not.have.been.called;
                callback.should.not.have.been.called;
@@ -687,13 +740,13 @@ describe('Loop behaviour', () => {
              it('should delete non-zero-indexed items from ' + step.description + ' step link and redirect to last step', function() {
                req.params.id = '1';
                const originalItems = [{}, {}];
-               req.sessionModel.get.withArgs('items').returns(originalItems.slice());
+               req.sessionModel.get.withArgs('badgers-items').returns(originalItems.slice());
                req.params.action = step.name;
 
                loop.get(req, res, callback);
 
                req.sessionModel.set.should.have.been.calledOnce
-                 .and.calledWithExactly('items', [originalItems[0]]);
+                 .and.calledWithExactly('badgers-items', [originalItems[0]]);
 
                superGet.should.not.have.been.called;
                callback.should.not.have.been.called;
@@ -703,13 +756,13 @@ describe('Loop behaviour', () => {
 
              it('should delete items from ' + step.description + ' step link and redirect to first step if there are no more items', function() {
                const originalItems = [{}];
-               req.sessionModel.get.withArgs('items').returns(originalItems.slice());
+               req.sessionModel.get.withArgs('badgers-items').returns(originalItems.slice());
                req.params.action = step.name;
 
                loop.get(req, res, callback);
 
                req.sessionModel.set.should.have.been.calledOnce
-                 .and.calledWithExactly('items', []);
+                 .and.calledWithExactly('badgers-items', []);
 
                superGet.should.not.have.been.called;
                callback.should.not.have.been.called;
@@ -725,6 +778,10 @@ describe('Loop behaviour', () => {
 
         beforeEach(() => {
           superGetBackLink.reset();
+        });
+
+        after(() => {
+          superGetBackLink.restore();
         });
 
         it('should return the result from super.getBackLink if this is the first visit to the first step', () => {
@@ -781,7 +838,7 @@ describe('Loop behaviour', () => {
         });
 
         it('should return relative path to final step for first step when we have been round the loop before', () => {
-          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.subSteps));
+          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.loop.subSteps));
           req.params.action = 'something';
 
           const returned = loop.getBackLink(req, res);
@@ -790,7 +847,7 @@ describe('Loop behaviour', () => {
         });
 
         it('should return relative path to previous step for later step when we have been round the loop before', ()=>{
-          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.subSteps));
+          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.loop.subSteps));
           req.params.action = 'step2';
 
           const returned = loop.getBackLink(req, res);
@@ -800,7 +857,6 @@ describe('Loop behaviour', () => {
       });
 
       describe('getNextStep', () => {
-        const superGetForkTarget = sinon.stub(Controller.prototype, 'getForkTarget');
         const superGetNextStep = sinon.stub(Controller.prototype, 'getNextStep');
 
         const steps = [
@@ -810,8 +866,11 @@ describe('Loop behaviour', () => {
         ];
 
         beforeEach(() => {
-          superGetForkTarget.reset();
           superGetNextStep.reset();
+        });
+
+        after(() => {
+          superGetNextStep.restore();
         });
 
         steps.forEach(function(step) {
@@ -838,7 +897,7 @@ describe('Loop behaviour', () => {
             req.params.action = step.name;
             req.params.edit = 'change';
             req.form.options.route = options.route;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.url = options.route + '/' + step.name;
 
             const returned = loop.getNextStep(req, res);
@@ -851,7 +910,7 @@ describe('Loop behaviour', () => {
             req.params.action = step.name;
             req.params.edit = 'change';
             req.form.options.route = options.route;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.url = options.route + '/' + step.name;
 
             const returned = loop.getNextStep(req, res);
@@ -865,7 +924,7 @@ describe('Loop behaviour', () => {
           it('should return the following step for ' + step.description + ' step when there are no forks', function() {
             req.params.action = step.name;
             req.url = options.route + '/' + step.name;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.form.options.next = step.followingStep;
 
             const returned = loop.getNextStep(req, res);
@@ -876,7 +935,7 @@ describe('Loop behaviour', () => {
           it('should handle leading / from next step with trailing / from baseUrl', function() {
             req.params.action = step.name;
             req.url = options.route + '/' + step.name;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.form.options.next = '/' + step.followingStep;
             req.baseUrl = '/app/';
 
@@ -884,88 +943,77 @@ describe('Loop behaviour', () => {
 
             expect(returned).to.equal('/app/badgers/' + step.followingStep);
           });
+        });
 
-          it('should use the fork target from the superclass when there are forks', function() {
-            req.params.action = step.name;
-            req.url = options.route + '/' + step.name;
-            req.form.options.subSteps = options.subSteps;
-            req.form.options.forks = {};
-            superGetForkTarget.returns('monkeys');
+        it('should use the fork target when there are forks and the fork condition is met', function() {
+          req.params.action = 'step2';
+          req.url = options.route + '/step2';
+          req.form.options.loop = options.loop;
+          req.form.options.forks = options.loop.subSteps.step2.forks;
+          req.form.values.field2 = 'fork it!';
+          req.form.options.next = options.loop.subSteps.step2.next;
 
-            const returned = loop.getNextStep(req, res);
+          const returned = loop.getNextStep(req, res);
 
-            expect(returned).to.equal('/app/badgers/monkeys');
-          });
+          expect(returned).to.equal('/app/badgers/forkedStep');
+        });
 
-          it('should handle leading / from getForkTarget with trailing / from baseUrl with forks', function() {
-            req.baseUrl = '/app/';
-            req.params.action = step.name;
-            req.url = options.route + '/' + step.name;
-            req.form.options.subSteps = options.subSteps;
-            req.form.options.forks = {};
-            superGetForkTarget.returns('/monkeys');
+        it('should use the next value when there are forks and the fork condition is not met', function() {
+          req.params.action = 'step2';
+          req.url = options.route + '/step2';
+          req.form.options.loop = options.loop;
+          req.form.options.forks = options.loop.subSteps.step2.forks;
+          req.form.values.field2 = 'do not fork it!';
+          req.form.options.next = options.loop.subSteps.step2.next;
 
-            const returned = loop.getNextStep(req, res);
+          const returned = loop.getNextStep(req, res);
 
-            expect(returned).to.equal('/app/badgers/monkeys');
-          });
+          expect(returned).to.equal('/app/badgers/add-another');
+        });
+
+        it('should handle leading / from getForkTarget with trailing / from baseUrl with forks', function() {
+          req.baseUrl = '/app/';
+          req.params.action = 'step2';
+          req.url = options.route + '/step2';
+          req.form.options.loop = options.loop;
+          req.form.options.forks = options.loop.subSteps.step2.forks;
+          req.form.values.field2 = 'fork it!';
+          req.form.options.next = options.loop.subSteps.step2.next;
+
+          const returned = loop.getNextStep(req, res);
+
+          expect(returned).to.equal('/app/badgers/forkedStep');
         });
 
         it('should return the next top-level step for the final step if there is no loop condition', function() {
           req.params.action = 'add-another';
           superGetNextStep.returns('monkeys');
-          req.form.options.subSteps = options.subSteps;
+          req.form.options.loop = options.loop;
 
           const returned = loop.getNextStep(req, res);
 
-          expect(returned).to.equal('/app/monkeys');
-        });
-
-        it('should handle leading / from super.getNextStep with trailing / from baseUrl', function() {
-          req.params.action = 'add-another';
-          superGetNextStep.returns('/monkeys');
-          req.form.options.subSteps = options.subSteps;
-          req.baseUrl = '/app/';
-
-          const returned = loop.getNextStep(req, res);
-
-          expect(returned).to.equal('/app/monkeys');
+          expect(returned).to.equal('monkeys');
         });
 
         it('should return the next top-level step for the final step if the loop condition fails', function() {
           req.params.action = 'add-another';
           superGetNextStep.returns('monkeys');
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.loopCondition = {
+          req.form.options.loop = options.loop;
+          req.form.options.loop.loopCondition = {
             field: 'field1',
             value: 'yes'
           };
 
           const returned = loop.getNextStep(req, res);
 
-          expect(returned).to.equal('/app/monkeys');
-        });
-
-        it('should handle leading and trailing /s when loop condition fails', function() {
-          req.params.action = 'add-another';
-          superGetNextStep.returns('/monkeys');
-          req.form.options.subSteps = options.subSteps;
-          req.baseUrl = '/app/';
-          req.form.options.loopCondition = {
-            field: 'field1',
-            value: 'yes'
-          };
-
-          const returned = loop.getNextStep(req, res);
-
-          expect(returned).to.equal('/app/monkeys');
+          expect(returned).to.equal('monkeys');
         });
 
         it('should return the next step if on the final step and the loopCondition has been met', function() {
           req.params.action = 'add-another';
 
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.loopCondition = {
+          req.form.options.loop = options.loop;
+          req.form.options.loop.loopCondition = {
             field: 'field1',
             value: 'yes'
           };
@@ -980,8 +1028,8 @@ describe('Loop behaviour', () => {
         it('should handle trailing / from baseUrl when loopCondition is met', function() {
           req.params.action = 'add-another';
 
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.loopCondition = {
+          req.form.options.loop = options.loop;
+          req.form.options.loop.loopCondition = {
             field: 'field1',
             value: 'yes'
           };
@@ -996,6 +1044,17 @@ describe('Loop behaviour', () => {
       });
 
       describe('saveValues', () => {
+        const superSaveValues = sinon.stub(Controller.prototype, 'saveValues');
+
+        beforeEach(() => {
+          superSaveValues.reset();
+          superSaveValues.callThrough();
+        });
+
+        after(() => {
+          superSaveValues.restore();
+        });
+
         describe('when editing an existing item', () => {
           it('should store any provided form values into the specified item', () => {
 
@@ -1003,7 +1062,7 @@ describe('Loop behaviour', () => {
               field1: 'something',
               field2: 'somethingElse'
             };
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               },
@@ -1022,7 +1081,7 @@ describe('Loop behaviour', () => {
             expect(returned).to.equal('a badger');
             callback.should.have.been.calledOnce;
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1043,7 +1102,7 @@ describe('Loop behaviour', () => {
               field2: null,
               field3: 'badger3'
             };
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               },
@@ -1063,7 +1122,7 @@ describe('Loop behaviour', () => {
             expect(returned).to.equal('a badger');
             callback.should.have.been.calledOnce;
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1081,7 +1140,7 @@ describe('Loop behaviour', () => {
             req.form.values = {
               field3: 'badger3'
             };
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               },
@@ -1101,7 +1160,7 @@ describe('Loop behaviour', () => {
             expect(returned).to.equal('a badger');
             callback.should.have.been.calledOnce;
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1120,7 +1179,7 @@ describe('Loop behaviour', () => {
         describe('when reaching the end of data entry for a new item', () => {
           it('should save the values into a new loop item', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1134,7 +1193,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1145,14 +1204,14 @@ describe('Loop behaviour', () => {
                 }
               ]);
             req.sessionModel.unset.should.have.been.calledOnce
-              .and.calledWithExactly(['field1', 'field2', 'field3']);
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
             callback.should.have.been.calledOnce
               .and.calledWithExactly();
           });
 
           it('should ignore fields with no value', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1166,7 +1225,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1175,14 +1234,14 @@ describe('Loop behaviour', () => {
                 }
               ]);
             req.sessionModel.unset.should.have.been.calledOnce
-              .and.calledWithExactly(['field1', 'field2', 'field3']);
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
             callback.should.have.been.calledOnce
               .and.calledWithExactly();
           });
 
           it('should create an array of items if none exists', () => {
 
-            req.sessionModel.get.withArgs('items').returns(undefined);
+            req.sessionModel.get.withArgs('badgers-items').returns(undefined);
             req.sessionModel.get.withArgs('field1').returns('something');
             req.sessionModel.get.withArgs('field2').returns('somethingElse');
             req.sessionModel.get.withArgs('field3').returns('something3');
@@ -1192,7 +1251,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'something',
                   field2: 'somethingElse',
@@ -1200,36 +1259,137 @@ describe('Loop behaviour', () => {
                 }
               ]);
             req.sessionModel.unset.should.have.been.calledOnce
-              .and.calledWithExactly(['field1', 'field2', 'field3']);
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
             callback.should.have.been.calledOnce
               .and.calledWithExactly();
           });
 
           it('should handle errors in calling super.saveValues', () => {
-            const superSaveValues = sinon.stub(Controller.prototype, 'saveValues');
-            try {
+            req.form.action = 'step2';
+            req.form.options.next = 'add-another';
 
-              req.form.action = 'step2';
-              req.form.options.next = 'add-another';
+            const error = 'some error';
+            superSaveValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error);
 
-              const error = 'some error';
-              superSaveValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error);
+            loop.saveValues(req, res, callback);
 
-              loop.saveValues(req, res, callback);
+            req.sessionModel.set.should.not.have.been.called;
+            req.sessionModel.unset.should.not.have.been.called;
+            callback.should.have.been.calledOnce
+              .and.calledWithExactly(error);
+          });
+        });
 
-              req.sessionModel.set.should.not.have.been.called;
-              req.sessionModel.unset.should.not.have.been.called;
-              callback.should.have.been.calledOnce
-                .and.calledWithExactly(error);
-            } finally {
-              superSaveValues.restore();
-            }
+        describe('when reaching the end of data entry for a new item from a fork', () => {
+          it('should save the values into a new loop item', () => {
+
+            req.sessionModel.get.withArgs('badgers-items').returns([
+              {
+                field1: 'initial'
+              }
+            ]);
+            req.sessionModel.get.withArgs('field1').returns('something');
+            req.sessionModel.get.withArgs('field2').returns('somethingElse');
+            req.sessionModel.get.withArgs('field3').returns('something3');
+            req.sessionModel.get.withArgs('field4').returns('something4');
+            req.form.action = 'forkedStep';
+            req.form.options.next = 'add-another';
+
+            loop.saveValues(req, res, callback);
+
+            req.sessionModel.set.should.have.been.calledOnce
+              .and.calledWithExactly('badgers-items', [
+                {
+                  field1: 'initial'
+                },
+                {
+                  field1: 'something',
+                  field2: 'somethingElse',
+                  field4: 'something4',
+                  field3: 'something3'
+                }
+              ]);
+            req.sessionModel.unset.should.have.been.calledOnce
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
+            callback.should.have.been.calledOnce
+              .and.calledWithExactly();
+          });
+
+          it('should ignore fields with no value', () => {
+
+            req.sessionModel.get.withArgs('badgers-items').returns([
+              {
+                field1: 'initial'
+              }
+            ]);
+            req.sessionModel.get.withArgs('field1').returns('');
+            req.sessionModel.get.withArgs('field2').returns('somethingElse');
+            req.sessionModel.get.withArgs('field4').returns(null);
+            req.sessionModel.get.withArgs('field3').returns(undefined);
+            req.form.action = 'step2';
+            req.form.options.next = 'add-another';
+
+            loop.saveValues(req, res, callback);
+
+            req.sessionModel.set.should.have.been.calledOnce
+              .and.calledWithExactly('badgers-items', [
+                {
+                  field1: 'initial'
+                },
+                {
+                  field2: 'somethingElse',
+                }
+              ]);
+            req.sessionModel.unset.should.have.been.calledOnce
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
+            callback.should.have.been.calledOnce
+              .and.calledWithExactly();
+          });
+
+          it('should create an array of items if none exists', () => {
+
+            req.sessionModel.get.withArgs('badgers-items').returns(undefined);
+            req.sessionModel.get.withArgs('field1').returns('something');
+            req.sessionModel.get.withArgs('field2').returns('somethingElse');
+            req.sessionModel.get.withArgs('field3').returns('something3');
+            req.form.action = 'step2';
+            req.form.options.next = 'add-another';
+
+            loop.saveValues(req, res, callback);
+
+            req.sessionModel.set.should.have.been.calledOnce
+              .and.calledWithExactly('badgers-items', [
+                {
+                  field1: 'something',
+                  field2: 'somethingElse',
+                  field3: 'something3'
+                }
+              ]);
+            req.sessionModel.unset.should.have.been.calledOnce
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
+            callback.should.have.been.calledOnce
+              .and.calledWithExactly();
+          });
+
+          it('should handle errors in calling super.saveValues', () => {
+            req.form.action = 'step2';
+            req.form.options.next = 'add-another';
+
+            const error = 'some error';
+            superSaveValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error);
+
+            loop.saveValues(req, res, callback);
+
+            req.sessionModel.set.should.not.have.been.called;
+            req.sessionModel.unset.should.not.have.been.called;
+            callback.should.have.been.calledOnce
+              .and.calledWithExactly(error);
           });
         });
 
         describe('when reaching the end of adding a new item in a single step loop', () => {
           beforeEach(()=> {
-            options.subSteps = {
+            options.loop.subSteps = {
               something: {
                 fields: ['field1', 'field2', 'field3']
               }
@@ -1238,7 +1398,7 @@ describe('Loop behaviour', () => {
           });
           it('should save the values into a new loop item', () => {
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'initial'
               }
@@ -1251,7 +1411,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'initial'
                 },
@@ -1262,14 +1422,14 @@ describe('Loop behaviour', () => {
                 }
               ]);
             req.sessionModel.unset.should.have.been.calledOnce
-              .and.calledWithExactly(['field1', 'field2', 'field3']);
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
             callback.should.have.been.calledOnce
               .and.calledWithExactly();
           });
 
           it('should create a new items array if none exists', () => {
 
-            req.sessionModel.get.withArgs('items').returns(undefined);
+            req.sessionModel.get.withArgs('badgers-items').returns(undefined);
             req.sessionModel.get.withArgs('field1').returns('something');
             req.sessionModel.get.withArgs('field2').returns('somethingElse');
             req.sessionModel.get.withArgs('field3').returns('something3');
@@ -1278,7 +1438,7 @@ describe('Loop behaviour', () => {
             loop.saveValues(req, res, callback);
 
             req.sessionModel.set.should.have.been.calledOnce
-              .and.calledWithExactly('items', [
+              .and.calledWithExactly('badgers-items', [
                 {
                   field1: 'something',
                   field2: 'somethingElse',
@@ -1286,29 +1446,23 @@ describe('Loop behaviour', () => {
                 }
               ]);
             req.sessionModel.unset.should.have.been.calledOnce
-              .and.calledWithExactly(['field1', 'field2', 'field3']);
+              .and.calledWithExactly(['field1', 'field2', 'field4', 'field3']);
             callback.should.have.been.calledOnce
               .and.calledWithExactly();
           });
 
           it('should handle errors in calling super.saveValues', () => {
-            const superSaveValues = sinon.stub(Controller.prototype, 'saveValues');
-            try {
+            req.form.action = 'something';
 
-              req.form.action = 'something';
+            const error = 'some error';
+            superSaveValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error);
 
-              const error = 'some error';
-              superSaveValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error);
+            loop.saveValues(req, res, callback);
 
-              loop.saveValues(req, res, callback);
-
-              req.sessionModel.set.should.not.have.been.called;
-              req.sessionModel.unset.should.not.have.been.called;
-              callback.should.have.been.calledOnce
-                .and.calledWithExactly(error);
-            } finally {
-              superSaveValues.restore();
-            }
+            req.sessionModel.set.should.not.have.been.called;
+            req.sessionModel.unset.should.not.have.been.called;
+            callback.should.have.been.calledOnce
+              .and.calledWithExactly(error);
           });
         });
 
@@ -1328,22 +1482,16 @@ describe('Loop behaviour', () => {
 
         describe('when submitting from an intermediate data entry step', () => {
           it('should delegate to super.saveValues passing the original callback', () => {
-            const superSaveValues = sinon.stub(Controller.prototype, 'saveValues');
-            try {
+            req.form.action = 'something';
+            superSaveValues.withArgs(req, res, callback).returns('a badger');
 
-              req.form.action = 'something';
-              superSaveValues.returns('a badger');
+            const returned = loop.saveValues(req, res, callback);
 
-              const returned = loop.saveValues(req, res, callback);
-
-              req.sessionModel.set.should.not.have.been.called;
-              req.sessionModel.unset.should.not.have.been.called;
-              superSaveValues.should.have.been.calledOnce
-                .and.calledWithExactly(req, res, callback);
-              expect(returned).to.equal('a badger');
-            } finally {
-              superSaveValues.restore();
-            }
+            req.sessionModel.set.should.not.have.been.called;
+            req.sessionModel.unset.should.not.have.been.called;
+            superSaveValues.should.have.been.calledOnce
+              .and.calledWithExactly(req, res, callback);
+            expect(returned).to.equal('a badger');
           });
         });
       });
@@ -1355,17 +1503,20 @@ describe('Loop behaviour', () => {
           superLocals.reset();
         });
 
+        after(() => {
+          superLocals.restore();
+        });
+
         it('should expose appropriate locals for any page in the loop', () => {
           const existingLocals = {
             something: 'someValue',
             route: 'badgers'
           };
-          options.loopData.sectionKey = 'my-section-key';
 
           superLocals.returns(existingLocals);
 
           const items = [{}];
-          req.sessionModel.get.withArgs('items').returns(items);
+          req.sessionModel.get.withArgs('badgers-items').returns(items);
           req.params.action = 'something';
 
           loop.loopPageSummary.summaryFor = sinon.stub();
@@ -1380,7 +1531,7 @@ describe('Loop behaviour', () => {
             .and.calledWithExactly(req, res);
 
           loop.loopPageSummary.summaryFor.should.have.been.calledOnce
-            .and.calledWithExactly(req, 'badgers-something', items);
+            .and.calledWithExactly(req, 'badgers-something', items, options);
 
           expect(returned).to.deep.equal({
             something: 'someValue',
@@ -1393,8 +1544,12 @@ describe('Loop behaviour', () => {
       describe('successHandler', () => {
         const superSuccessHandler = sinon.stub(Controller.prototype, 'successHandler');
 
-        beforeEach(()=> {
+        beforeEach(() => {
           superSuccessHandler.reset();
+        });
+
+        after(() => {
+          superSuccessHandler.restore();
         });
 
         describe('for the first visited page', () => {
@@ -1445,6 +1600,10 @@ describe('Loop behaviour', () => {
           superGetValues.reset();
         });
 
+        after(()=> {
+          superGetValues.restore();
+        });
+
         describe('when editing an existing item', () => {
           it('should append the item with the specified id to the returned values before calling the callback', () => {
             req.params.action = 'step2';
@@ -1455,7 +1614,7 @@ describe('Loop behaviour', () => {
             };
             superGetValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error, values);
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'mongoose',
                 field2: 'sheep',
@@ -1496,7 +1655,7 @@ describe('Loop behaviour', () => {
             };
             superGetValues.withArgs(req, res, sinon.match.func).callsArgWith(2, error, values);
 
-            req.sessionModel.get.withArgs('items').returns([
+            req.sessionModel.get.withArgs('badgers-items').returns([
               {
                 field1: 'mongoose',
                 field2: 'sheep',

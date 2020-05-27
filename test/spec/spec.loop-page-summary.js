@@ -3,19 +3,20 @@
 const LoopBehaviour = require('../../').Loop;
 const Controller = require('hof-form-controller').Controller;
 const Loop = LoopBehaviour(Controller);
-const loopPageSummary = new Loop({loopData: {}}).loopPageSummary;
+const loopPageSummary = new Loop({loop: {}}).loopPageSummary;
 
 describe('Loop page summary', () => {
 
   it('should return the expected loop summary', () => {
-    const loopData = {
-      sectionKey: 'some-section'
+    const options = {
+      loop: {
+        sectionKey: 'some-section'
+      }
     };
     const req = request({});
-    req.form.options.loopData = loopData;
+    req.form.options.loop = options.loop;
 
     loopPageSummary.helpers = {
-      resolveTitle: sinon.stub(),
       toDisplayableSummary: sinon.stub(),
       conditionalTranslate: sinon.stub()
     };
@@ -26,28 +27,29 @@ describe('Loop page summary', () => {
       field1: 'badger'
     }];
     loopPageSummary.helpers.toDisplayableSummary.returns(itemSummaries);
-    loopPageSummary.helpers.resolveTitle.returns('some title');
-    loopPageSummary.helpers.conditionalTranslate.returns('some intro');
+    loopPageSummary.helpers.conditionalTranslate.withArgs(['pages.root-something.item-2-header',
+      'pages.root-something.header']).returns('some title');
+    loopPageSummary.helpers.conditionalTranslate.withArgs(['pages.root-something.item-2-intro',
+      'pages.root-something.intro']).returns('some intro');
     req.translate.withArgs('pages.some-section.header').returns('summary title');
     req.translate.withArgs('pages.some-section.delete-text').returns('delete text');
 
-    const returned = loopPageSummary.summaryFor(req, 'root-something', items);
+    const returned = loopPageSummary.summaryFor(req, 'root-something', items, options);
 
     loopPageSummary.helpers.toDisplayableSummary.should.have.been.calledOnce
-      .and.calledWithExactly(req, items, loopData);
-    loopPageSummary.helpers.resolveTitle.should.have.been.calledOnce
-      .and.calledWithExactly(req, false, 'root-something');
-    loopPageSummary.helpers.conditionalTranslate.should.have.been.calledOnce
-      .and.calledWithExactly('pages.root-something.intro', req.translate);
+      .and.calledWithExactly(req, items, options);
 
-    req.translate.should.have.been.calledWithExactly('pages.some-section.header');
+    loopPageSummary.helpers.conditionalTranslate.should.have.been
+            .calledWithExactly(['pages.root-something.item-2-header', 'pages.root-something.header'], req.translate);
+    loopPageSummary.helpers.conditionalTranslate.should.have.been
+      .calledWithExactly(['pages.root-something.item-2-intro', 'pages.root-something.intro'], req.translate);
+
     req.translate.should.have.been.calledWithExactly('pages.some-section.delete-text');
 
     expect(returned).to.deep.equal({
       title: 'some title',
       intro: 'some intro',
-      itemSummaries: itemSummaries,
-      summaryTitle: 'summary title',
+      items: itemSummaries,
       hasItems: 1,
       deleteText: 'delete text'
     });

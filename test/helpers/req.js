@@ -11,7 +11,7 @@ module.exports = req => {
     get: sinon.stub(),
     unset: sinon.stub()
   };
-  req.translate = sinon.stub();
+  req.translate = req.translate || sinon.stub();
   req.baseUrl = req.baseUrl || '/app';
   return require('reqres').req(req);
 };

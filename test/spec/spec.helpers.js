@@ -3,7 +3,7 @@
 const LoopBehaviour = require('../../').Loop;
 const Controller = require('hof-form-controller').Controller;
 const Loop = LoopBehaviour(Controller);
-const helpers = new Loop({loopData: {}}).loopPageSummary.helpers;
+const helpers = new Loop({loop: {}}).loopPageSummary.helpers;
 
 describe('Loop page summary helpers', () => {
   let req;
@@ -68,85 +68,37 @@ describe('Loop page summary helpers', () => {
 
   });
 
-  describe('resolveTitle', () => {
-    const pagePath = 'some-page';
-
-    it('should return title from first-item-header if one exists and this is the first item', () => {
-      req.translate.withArgs('pages.some-page.first-item-header').returns('badgers');
-      req.translate.withArgs('pages.some-page.header').returns('monkeys');
-
-      const returned = helpers.resolveTitle(req, true, pagePath);
-
-      req.translate.should.have.been.calledWithExactly('pages.some-page.first-item-header');
-      req.translate.should.have.been.calledWithExactly('pages.some-page.header');
-
-      expect(returned).to.equal('badgers');
-    });
-
-    it('should return title from header if no first-item-header exists and this is the first item', () => {
-      req.translate.withArgs('pages.some-page.first-item-header').returns('pages.some-page.first-item-header');
-      req.translate.withArgs('pages.some-page.header').returns('monkeys');
-
-      const returned = helpers.resolveTitle(req, true, pagePath);
-
-      req.translate.should.have.been.calledWithExactly('pages.some-page.first-item-header');
-      req.translate.should.have.been.calledWithExactly('pages.some-page.header');
-
-      expect(returned).to.equal('monkeys');
-    });
-
-    it('should not check first-item-header if this is not the first item', () => {
-      req.translate.withArgs('pages.some-page.header').returns('monkeys');
-
-      const returned = helpers.resolveTitle(req, false, pagePath);
-
-      req.translate.should.have.been.calledOnce
-        .and.calledWithExactly('pages.some-page.header');
-
-      expect(returned).to.equal('monkeys');
-    });
-
-  });
-
   describe('toDisplayableSummary', () => {
-    const loopData = {
-      confirmStep: '/confirm',
-      sectionKey: 'some-section'
+    const loop = {
+      sectionKey: 'some-section',
+      subSteps: {
+        'step-1': {
+          fields: ['field1', 'field2']
+        },
+        'step-2': {
+          fields: ['field3']
+        }
+      }
     };
 
     let options;
 
     beforeEach(() => {
        options = {
-         steps: {
-           '/confirm': {
-             loopSections: {
-               'step-1': [
-                 'field1',
-                 'field2'
-               ],
-               'step-2': [
-                 'field3'
-               ]
-             }
-           }
-         },
          fields: {
            field1: {},
            field2: {},
            field3: {}
          },
-         subSteps: {
-           'step-1': {
-             fields: ['field1', 'field2']
-           },
-           'step-2': {
-             fields: ['field3']
-           }
-         }
+         fieldsConfig: {
+           field1: {},
+           field2: {},
+           field3: {}
+         },
+         loop: loop
        };
 
-      req.form.options = options;
+      req.form.options.steps = options.steps;
     });
 
     describe('with no configuration overrides set', () => {
@@ -164,7 +116,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -176,6 +128,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -214,7 +167,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -226,6 +179,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -269,7 +223,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -282,6 +236,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'item title 1',
             editFieldsIndividually: true,
+            editHeader: false,
             changeRoute: 'step-1',
             fields: [
               {
@@ -309,6 +264,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'item title 2',
             editFieldsIndividually: true,
+            editHeader: false,
             changeRoute: 'step-1',
             fields: [
               {
@@ -344,24 +300,16 @@ describe('Loop page summary helpers', () => {
             field3: 'meerkat'
           }
         ];
-
-        options.steps['/confirm'].loopSections = {
-          'step-1': [
-            {
-              field: 'field1',
+        options.fieldsConfig = {
+          field1: {
               parse: d => d + ' a'
-            },
-            {
-              field: 'field2',
+          },
+          field2: {
               parse: d => d + ' x'
-            }
-          ],
-          'step-2': [
-            {
-              field: 'field3',
+          },
+          field3: {
               parse: d => d + ' y'
-            }
-          ]
+          }
         };
 
         req.translate.withArgs('pages.some-section.summary-item').returns('item title');
@@ -369,7 +317,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -381,6 +329,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -404,15 +353,71 @@ describe('Loop page summary helpers', () => {
           ]
         }]);
       });
+
+      it('should respect `omitFromSummary` flag', () => {
+        const items = [
+          {
+            field1: 'badger',
+            field2: 'monkeys',
+            field3: 'meerkat'
+          }
+        ];
+        options.fieldsConfig = {
+          field1: {
+              omitFromSummary: true
+          },
+          field2: {
+          },
+          field3: {
+          }
+        };
+
+        req.translate.withArgs('pages.some-section.summary-item').returns('item title');
+        req.translate.withArgs(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']).returns('field 1 display');
+        req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
+        req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
+
+        const returned = helpers.toDisplayableSummary(req, items, options);
+
+        req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
+        req.translate.should.not.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
+        req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
+        req.translate.should.have.been.calledWithExactly(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']);
+
+        expect(returned).to.deep.equal([{
+          id: 0,
+          deleteRoute: 'step-1',
+          itemTitle: 'item title',
+          editFieldsIndividually: true,
+          editHeader: false,
+          changeRoute: 'step-1',
+          fields: [
+            {
+              field: 'field2',
+              header: 'field 2 display',
+              subroute: 'step-1',
+              value: 'monkeys'
+            },
+            {
+              field: 'field3',
+              header: 'field 3 display',
+              subroute: 'step-2',
+              value: 'meerkat'
+            }
+          ]
+        }]);
+      });
     });
 
     describe('with headerField set', () => {
       before(() => {
-        loopData.headerField = 'field2';
+        loop.itemTable = {
+          headerField: 'field2'
+        };
       });
 
       after(() => {
-        delete loopData.headerField;
+        delete loop.itemTable;
       });
 
       it('should create appropriate summaries for a single item', () => {
@@ -429,7 +434,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
@@ -440,6 +445,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'monkeys',
           editFieldsIndividually: true,
+          editHeader: true,
           changeRoute: 'step-1',
           fields: [
             {
@@ -477,7 +483,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
@@ -489,6 +495,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'monkeys',
             editFieldsIndividually: true,
+            editHeader: true,
             changeRoute: 'step-1',
             fields: [
               {
@@ -510,6 +517,7 @@ describe('Loop page summary helpers', () => {
             deleteRoute: 'step-1',
             itemTitle: 'rabbit',
             editFieldsIndividually: true,
+            editHeader: true,
             changeRoute: 'step-1',
             fields: [
               {
@@ -539,7 +547,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs('pages.some-section.summary-item').returns('item title');
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
 
@@ -548,6 +556,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'monkeys',
           editFieldsIndividually: false,
+          editHeader: true,
           changeRoute: 'step-1',
           fields: []
         }]);
@@ -556,13 +565,16 @@ describe('Loop page summary helpers', () => {
 
     describe('with editFieldsIndividually set', () => {
 
+      beforeEach(() => {
+        loop.itemTable = {};
+      });
+
       afterEach(() => {
-        delete loopData.editFieldsIndividually;
-        delete loopData.headerField;
+        delete loop.itemTable;
       });
 
       it('should create appropriate summaries when set to true', () => {
-        loopData.editFieldsIndividually = true;
+        loop.itemTable.editFieldsIndividually = true;
         const items = [
           {
             field1: 'badger',
@@ -576,7 +588,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -588,6 +600,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: true,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
@@ -613,8 +626,8 @@ describe('Loop page summary helpers', () => {
       });
 
       it('should be overriden to false when headerField is set and there are no fields left to display', () => {
-        loopData.editFieldsIndividually = true;
-        loopData.headerField = 'field2';
+        loop.itemTable.editFieldsIndividually = true;
+        loop.itemTable.headerField = 'field2';
         const items = [
           {
             field2: 'monkeys'
@@ -624,7 +637,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs('pages.some-section.summary-item').returns('item title');
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']);
 
@@ -633,13 +646,14 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'monkeys',
           editFieldsIndividually: false,
+          editHeader: true,
           changeRoute: 'step-1',
           fields: []
         }]);
       });
 
       it('should create appropriate summaries when set to false', () => {
-        loopData.editFieldsIndividually = false;
+        loop.itemTable.editFieldsIndividually = false;
         const items = [
           {
             field1: 'badger',
@@ -653,7 +667,7 @@ describe('Loop page summary helpers', () => {
         req.translate.withArgs(['fields.field2.summary', 'fields.field2.label', 'fields.field2.legend']).returns('field 2 display');
         req.translate.withArgs(['fields.field3.summary', 'fields.field3.label', 'fields.field3.legend']).returns('field 3 display');
 
-        const returned = helpers.toDisplayableSummary(req, items, loopData);
+        const returned = helpers.toDisplayableSummary(req, items, options);
 
         req.translate.should.have.been.calledWithExactly('pages.some-section.summary-item');
         req.translate.should.have.been.calledWithExactly(['fields.field1.summary', 'fields.field1.label', 'fields.field1.legend']);
@@ -665,6 +679,7 @@ describe('Loop page summary helpers', () => {
           deleteRoute: 'step-1',
           itemTitle: 'item title',
           editFieldsIndividually: false,
+          editHeader: false,
           changeRoute: 'step-1',
           fields: [
             {
