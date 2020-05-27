@@ -164,7 +164,8 @@ module.exports = {
   ![Dependants summary with field as header](/examples/Multi%20field-header%20as%20field.png?raw=true)
   
   * **editFieldsIndividually** (optional, defaults to true unless headerField is specified and there is only one 
-  field per item) - controls whether the change link appears for an item or for each field within that item. 
+  field per item) - controls whether the change link appears for an item or for each field within that item. Setting the 
+  flag to false results in:
   ![Dependants summary editing individual fields](/examples/multi-field%20edit%20record%20level.png?raw=true)
   
 Combining the two gives us something suitable for editing entries where all fields are entered in one page:
