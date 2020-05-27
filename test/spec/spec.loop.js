@@ -30,19 +30,19 @@ describe('Loop behaviour', () => {
              omitFromSummary: true
            }
         },
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3', 'field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3', 'field4']
+            }
           }
         },
         route: '/badgers'
@@ -86,19 +86,19 @@ describe('Loop behaviour', () => {
            }
         },
         fields: {},
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3', 'field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3', 'field4']
+            }
           }
         },
         route: '/badgers'
@@ -142,7 +142,7 @@ describe('Loop behaviour', () => {
            }
         },
         fields: {},
-        loopData: {
+        loop: {
         },
         route: '/badgers'
       };
@@ -188,19 +188,19 @@ describe('Loop behaviour', () => {
              omitFromSummary: true
            }
         },
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3', 'field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3', 'field4']
+            }
           }
         },
         route: '/badgers'
@@ -230,16 +230,15 @@ describe('Loop behaviour', () => {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
-        },
-        subSteps: {
+        loop: {
+          subSteps: {}
         },
         route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.options.loopData.storeKey).to.equal('items');
+      expect(loop.options.loop.storeKey).to.equal('items');
       // we want the original value to be modified so that the summary module gets the right key
-      expect(options.loopData.storeKey).to.equal(loop.options.loopData.storeKey);
+      expect(options.loop.storeKey).to.equal(loop.options.loop.storeKey);
     });
 
     it('should not overwrite the storeKey attribute if provided', () => {
@@ -247,15 +246,14 @@ describe('Loop behaviour', () => {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
-          storeKey: 'monkeys'
-        },
-        subSteps: {
+        loop: {
+          storeKey: 'monkeys',
+          subSteps: {}
         },
         route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.options.loopData.storeKey).to.equal('monkeys');
+      expect(loop.options.loop.storeKey).to.equal('monkeys');
     });
 
     it('should default the sectionKey attribute based on the route if not provided', () => {
@@ -263,48 +261,30 @@ describe('Loop behaviour', () => {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
-        },
-        subSteps: {
+        loop: {
+          subSteps: {}
         },
         route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.options.loopData.sectionKey).to.equal('badgers');
+      expect(loop.options.loop.sectionKey).to.equal('badgers');
       // we want the original value to be modified so that the summary module gets the right key
-      expect(options.loopData.sectionKey).to.equal(loop.options.loopData.sectionKey);
+      expect(options.loop.sectionKey).to.equal(loop.options.loop.sectionKey);
     });
 
-    it('should overwrite the sectionKey attribute if provided', () => {
+    it('should ignore the sectionKey attribute if provided', () => {
       const options = {
         // fieldsConfig is provided by the surrounding framework in a real app
         fieldsConfig: {
         },
-        loopData: {
-          sectionKey: 'monkeys'
-        },
-        subSteps: {
-        },
-        route: '/badgers'
-      };
-      const loop = new Loop(options);
-      expect(loop.options.loopData.sectionKey).to.equal('badgers');
-    });
-
-    it('should take confirmStep from loopData', () => {
-      const options = {
-        // fieldsConfig is provided by the surrounding framework in a real app
-        fieldsConfig: {
-        },
-        loopData: {
-          confirmStep: '/monkeys'
-        },
-        subSteps: {
+        loop: {
+          sectionKey: 'monkeys',
+          subSteps: {}
         },
         route: '/badgers'
       };
       const loop = new Loop(options);
-      expect(loop.confirmStep).to.equal('/monkeys');
+      expect(loop.options.loop.sectionKey).to.equal('badgers');
     });
 
   });
@@ -333,19 +313,19 @@ describe('Loop behaviour', () => {
             omitFromSummary: true
           }
         },
-        loopData: {
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2', 'field3'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field4']
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2', 'field3'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field4']
+            }
           }
         },
         route: '/badgers'
@@ -406,33 +386,32 @@ describe('Loop behaviour', () => {
             omitFromSummary: true
           }
         },
-        loopData: {
-          confirmStep: '/confirm'
-        },
-        subSteps: {
-          something: {
-            fields: ['field1'],
-            next: 'step2'
-          },
-          step2: {
-            fields: ['field2'],
-            next: 'add-another',
-            forks: [
-              {
-                target: 'forkedStep',
-                  condition: {
-                    field: 'field2',
-                    value: 'fork it!'
+        loop: {
+          subSteps: {
+            something: {
+              fields: ['field1'],
+              next: 'step2'
+            },
+            step2: {
+              fields: ['field2'],
+              next: 'add-another',
+              forks: [
+                {
+                  target: 'forkedStep',
+                    condition: {
+                      field: 'field2',
+                      value: 'fork it!'
+                  }
                 }
-              }
-            ]
-          },
-          forkedStep: {
-            fields: ['field4'],
-            next: 'add-another'
-          },
-          'add-another': {
-            fields: ['field3']
+              ]
+            },
+            forkedStep: {
+              fields: ['field4'],
+              next: 'add-another'
+            },
+            'add-another': {
+              fields: ['field3']
+            }
           }
         },
         route: '/badgers'
@@ -549,7 +528,7 @@ describe('Loop behaviour', () => {
 
         describe('accessing a sub-step before its prerequisites are satisfied', () => {
            beforeEach(() => {
-             options.subSteps.step2.prereqs = 'someField';
+             options.loop.subSteps.step2.prereqs = 'someField';
              req.params.action = 'step2';
              req.sessionModel.get.withArgs('someField').returns(undefined);
            });
@@ -625,7 +604,7 @@ describe('Loop behaviour', () => {
 
         describe('accessing a sub-step when its prerequisites are satisfied', () => {
            beforeEach(() => {
-             options.subSteps.step2.prereqs = 'someField';
+             options.loop.subSteps.step2.prereqs = 'someField';
              req.params.action = 'step2';
              req.sessionModel.get.withArgs('someField').returns('something');
            });
@@ -843,7 +822,7 @@ describe('Loop behaviour', () => {
         });
 
         it('should return relative path to final step for first step when we have been round the loop before', () => {
-          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.subSteps));
+          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.loop.subSteps));
           req.params.action = 'something';
 
           const returned = loop.getBackLink(req, res);
@@ -852,7 +831,7 @@ describe('Loop behaviour', () => {
         });
 
         it('should return relative path to previous step for later step when we have been round the loop before', ()=>{
-          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.subSteps));
+          req.sessionModel.get.withArgs('subSteps').returns(Object.keys(options.loop.subSteps));
           req.params.action = 'step2';
 
           const returned = loop.getBackLink(req, res);
@@ -902,7 +881,7 @@ describe('Loop behaviour', () => {
             req.params.action = step.name;
             req.params.edit = 'change';
             req.form.options.route = options.route;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.url = options.route + '/' + step.name;
 
             const returned = loop.getNextStep(req, res);
@@ -915,7 +894,7 @@ describe('Loop behaviour', () => {
             req.params.action = step.name;
             req.params.edit = 'change';
             req.form.options.route = options.route;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.url = options.route + '/' + step.name;
 
             const returned = loop.getNextStep(req, res);
@@ -929,7 +908,7 @@ describe('Loop behaviour', () => {
           it('should return the following step for ' + step.description + ' step when there are no forks', function() {
             req.params.action = step.name;
             req.url = options.route + '/' + step.name;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.form.options.next = step.followingStep;
 
             const returned = loop.getNextStep(req, res);
@@ -940,7 +919,7 @@ describe('Loop behaviour', () => {
           it('should handle leading / from next step with trailing / from baseUrl', function() {
             req.params.action = step.name;
             req.url = options.route + '/' + step.name;
-            req.form.options.subSteps = options.subSteps;
+            req.form.options.loop = options.loop;
             req.form.options.next = '/' + step.followingStep;
             req.baseUrl = '/app/';
 
@@ -953,10 +932,10 @@ describe('Loop behaviour', () => {
         it('should use the fork target when there are forks and the fork condition is met', function() {
           req.params.action = 'step2';
           req.url = options.route + '/step2';
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.forks = options.subSteps.step2.forks;
+          req.form.options.loop = options.loop;
+          req.form.options.forks = options.loop.subSteps.step2.forks;
           req.form.values.field2 = 'fork it!';
-          req.form.options.next = options.subSteps.step2.next;
+          req.form.options.next = options.loop.subSteps.step2.next;
 
           const returned = loop.getNextStep(req, res);
 
@@ -966,10 +945,10 @@ describe('Loop behaviour', () => {
         it('should use the next value when there are forks and the fork condition is not met', function() {
           req.params.action = 'step2';
           req.url = options.route + '/step2';
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.forks = options.subSteps.step2.forks;
+          req.form.options.loop = options.loop;
+          req.form.options.forks = options.loop.subSteps.step2.forks;
           req.form.values.field2 = 'do not fork it!';
-          req.form.options.next = options.subSteps.step2.next;
+          req.form.options.next = options.loop.subSteps.step2.next;
 
           const returned = loop.getNextStep(req, res);
 
@@ -980,10 +959,10 @@ describe('Loop behaviour', () => {
           req.baseUrl = '/app/';
           req.params.action = 'step2';
           req.url = options.route + '/step2';
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.forks = options.subSteps.step2.forks;
+          req.form.options.loop = options.loop;
+          req.form.options.forks = options.loop.subSteps.step2.forks;
           req.form.values.field2 = 'fork it!';
-          req.form.options.next = options.subSteps.step2.next;
+          req.form.options.next = options.loop.subSteps.step2.next;
 
           const returned = loop.getNextStep(req, res);
 
@@ -993,7 +972,7 @@ describe('Loop behaviour', () => {
         it('should return the next top-level step for the final step if there is no loop condition', function() {
           req.params.action = 'add-another';
           superGetNextStep.returns('monkeys');
-          req.form.options.subSteps = options.subSteps;
+          req.form.options.loop = options.loop;
 
           const returned = loop.getNextStep(req, res);
 
@@ -1003,8 +982,8 @@ describe('Loop behaviour', () => {
         it('should return the next top-level step for the final step if the loop condition fails', function() {
           req.params.action = 'add-another';
           superGetNextStep.returns('monkeys');
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.loopCondition = {
+          req.form.options.loop = options.loop;
+          req.form.options.loop.loopCondition = {
             field: 'field1',
             value: 'yes'
           };
@@ -1017,8 +996,8 @@ describe('Loop behaviour', () => {
         it('should return the next step if on the final step and the loopCondition has been met', function() {
           req.params.action = 'add-another';
 
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.loopCondition = {
+          req.form.options.loop = options.loop;
+          req.form.options.loop.loopCondition = {
             field: 'field1',
             value: 'yes'
           };
@@ -1033,8 +1012,8 @@ describe('Loop behaviour', () => {
         it('should handle trailing / from baseUrl when loopCondition is met', function() {
           req.params.action = 'add-another';
 
-          req.form.options.subSteps = options.subSteps;
-          req.form.options.loopCondition = {
+          req.form.options.loop = options.loop;
+          req.form.options.loop.loopCondition = {
             field: 'field1',
             value: 'yes'
           };
@@ -1394,7 +1373,7 @@ describe('Loop behaviour', () => {
 
         describe('when reaching the end of adding a new item in a single step loop', () => {
           beforeEach(()=> {
-            options.subSteps = {
+            options.loop.subSteps = {
               something: {
                 fields: ['field1', 'field2', 'field3']
               }
@@ -1517,7 +1496,7 @@ describe('Loop behaviour', () => {
             something: 'someValue',
             route: 'badgers'
           };
-          options.loopData.sectionKey = 'my-section-key';
+          options.loop.sectionKey = 'my-section-key';
 
           superLocals.returns(existingLocals);
 

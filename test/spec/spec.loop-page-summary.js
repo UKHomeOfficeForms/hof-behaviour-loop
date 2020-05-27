@@ -3,18 +3,18 @@
 const LoopBehaviour = require('../../').Loop;
 const Controller = require('hof-form-controller').Controller;
 const Loop = LoopBehaviour(Controller);
-const loopPageSummary = new Loop({loopData: {}}).loopPageSummary;
+const loopPageSummary = new Loop({loop: {}}).loopPageSummary;
 
 describe('Loop page summary', () => {
 
   it('should return the expected loop summary', () => {
     const options = {
-      loopData: {
+      loop: {
         sectionKey: 'some-section'
       }
     };
     const req = request({});
-    req.form.options.loopData = options.loopData;
+    req.form.options.loop = options.loop;
 
     loopPageSummary.helpers = {
       resolveTitle: sinon.stub(),

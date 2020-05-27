@@ -29,17 +29,17 @@ describe('Summary Page Behaviour', () => {
           fields: ['field-one']
         },
         '/a-loop-step': {
-          subSteps: {
-            'sub-step-1': {
-              fields: ['another-loop-field']
-            },
-            'sub-step-2': {
-              fields: ['some-loop-field']
-            }
-          },
-          loopData: {
+          loop: {
             storeKey: 'my-store-key',
-            sectionKey: 'my-section-key'
+            sectionKey: 'my-section-key',
+            subSteps: {
+              'sub-step-1': {
+                fields: ['another-loop-field']
+              },
+              'sub-step-2': {
+                fields: ['some-loop-field']
+              }
+            }
           }
         },
         '/two': {
@@ -448,7 +448,7 @@ describe('Summary Page Behaviour', () => {
         expect(result.rows[2].fields[0].field).to.equal('field-two');
       });
 
-      it('should respect applySpacer override if presented in loopData', () => {
+      it('should respect applySpacer override if presented in loop config', () => {
         req.sessionModel.set({
           'field-one': 1,
           'field-two': 2,
@@ -480,7 +480,7 @@ describe('Summary Page Behaviour', () => {
              validate: 'required'
            }
         };
-        req.form.options.steps['/a-loop-step'].loopData.summary = {applySpacer: false};
+        req.form.options.steps['/a-loop-step'].loop.summary = {applySpacer: false};
 
         const result = controller.locals(req, res);
         expect(result.rows.length).to.equal(3);

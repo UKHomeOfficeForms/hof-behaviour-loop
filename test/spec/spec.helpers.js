@@ -3,7 +3,7 @@
 const LoopBehaviour = require('../../').Loop;
 const Controller = require('hof-form-controller').Controller;
 const Loop = LoopBehaviour(Controller);
-const helpers = new Loop({loopData: {}}).loopPageSummary.helpers;
+const helpers = new Loop({loop: {}}).loopPageSummary.helpers;
 
 describe('Loop page summary helpers', () => {
   let req;
@@ -108,9 +108,16 @@ describe('Loop page summary helpers', () => {
   });
 
   describe('toDisplayableSummary', () => {
-    const loopData = {
-      confirmStep: '/confirm',
-      sectionKey: 'some-section'
+    const loop = {
+      sectionKey: 'some-section',
+      subSteps: {
+        'step-1': {
+          fields: ['field1', 'field2']
+        },
+        'step-2': {
+          fields: ['field3']
+        }
+      }
     };
 
     let options;
@@ -127,15 +134,7 @@ describe('Loop page summary helpers', () => {
            field2: {},
            field3: {}
          },
-         subSteps: {
-           'step-1': {
-             fields: ['field1', 'field2']
-           },
-           'step-2': {
-             fields: ['field3']
-           }
-         },
-         loopData: loopData
+         loop: loop
        };
 
       req.form.options.steps = options.steps;
@@ -445,11 +444,13 @@ describe('Loop page summary helpers', () => {
 
     describe('with headerField set', () => {
       before(() => {
-        loopData.headerField = 'field2';
+        loop.itemTable = {
+          headerField: 'field2'
+        };
       });
 
       after(() => {
-        delete loopData.headerField;
+        delete loop.itemTable;
       });
 
       it('should create appropriate summaries for a single item', () => {
@@ -593,13 +594,16 @@ describe('Loop page summary helpers', () => {
 
     describe('with editFieldsIndividually set', () => {
 
+      beforeEach(() => {
+        loop.itemTable = {};
+      });
+
       afterEach(() => {
-        delete loopData.editFieldsIndividually;
-        delete loopData.headerField;
+        delete loop.itemTable;
       });
 
       it('should create appropriate summaries when set to true', () => {
-        loopData.editFieldsIndividually = true;
+        loop.itemTable.editFieldsIndividually = true;
         const items = [
           {
             field1: 'badger',
@@ -650,8 +654,8 @@ describe('Loop page summary helpers', () => {
       });
 
       it('should be overriden to false when headerField is set and there are no fields left to display', () => {
-        loopData.editFieldsIndividually = true;
-        loopData.headerField = 'field2';
+        loop.itemTable.editFieldsIndividually = true;
+        loop.itemTable.headerField = 'field2';
         const items = [
           {
             field2: 'monkeys'
@@ -676,7 +680,7 @@ describe('Loop page summary helpers', () => {
       });
 
       it('should create appropriate summaries when set to false', () => {
-        loopData.editFieldsIndividually = false;
+        loop.itemTable.editFieldsIndividually = false;
         const items = [
           {
             field1: 'badger',
