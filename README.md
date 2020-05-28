@@ -1,6 +1,7 @@
 # hof-behaviour-loop
 
-HOF behaviour supporting adding 0..n sections of a given type. E.G. when declaring information about children/dependants. 
+HOF behaviour allowing forms to collect multiple, unbounded, data items. E.G. When we need to collect information about
+the dependants a person has, or other names someone has been known by.   
 
 ## Installation
 
