@@ -1,6 +1,6 @@
 {
   "name": "hof-behaviour-loop",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A hof plugin allowing for 'loop' behaviour. e.g. 'add another child'",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/UKHomeOfficeForms/hof-behaviour-loop",
   "dependencies": {
-    "hof-behaviour-summary-page": "^3.2.1",
+    "hof-behaviour-summary-page": "^3.3.0",
     "lodash": "^4.17.15",
     "mixwith": "^0.1.1"
   },
