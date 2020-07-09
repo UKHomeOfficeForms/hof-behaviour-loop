@@ -1,6 +1,6 @@
 {
   "name": "hof-behaviour-loop",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A hof plugin allowing for 'loop' behaviour. e.g. 'add another child'",
   "main": "index.js",
   "scripts": {
